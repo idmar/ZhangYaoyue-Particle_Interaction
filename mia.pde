@@ -4,6 +4,13 @@ import processing.sound.*;
 
 import ddf.minim.*;
 import java.nio.*;
+// 多图片漂浮相关
+class FloatingImg {
+  PImage img;
+  float x, y, vx, vy;
+  float w, h;
+}
+ArrayList<FloatingImg> floatingImgs = new ArrayList<FloatingImg>();
 
 Minim minim;
 AudioPlayer player;
@@ -45,6 +52,25 @@ void setup() {
   colorMode(HSB, 360, 100, 100, 100);
   
   minim = new Minim(this);
+  // 加载 data/ 目录下所有图片
+  String[] imgFiles = {"博物馆之梦.jpg", "回溯经典.jpg", "回溯.png", "经典.png"};
+  for (int i = 0; i < imgFiles.length; i++) {
+    PImage img = loadImage("data/" + imgFiles[i]);
+    if (img != null) {
+      FloatingImg fi = new FloatingImg();
+      fi.img = img;
+      float maxW = width * 0.3;
+      float maxH = height * 0.3;
+      float scale = min(maxW / img.width, maxH / img.height, 1.0) * random(0.7, 1.0);
+      fi.w = img.width * scale;
+      fi.h = img.height * scale;
+      fi.x = random(0, width - fi.w);
+      fi.y = random(0, height - fi.h);
+      fi.vx = random(-0.3, 0.3);
+      fi.vy = random(-0.2, 0.2);
+      floatingImgs.add(fi);
+    }
+  }
   try {
     player = minim.loadFile("科幻.mp3");
     player.loop();
@@ -78,6 +104,17 @@ void draw() {
   
   // 先绘制文字，确保在粒子前面
   drawForegroundText();
+  // 多图片均匀漂浮
+  if (floatingImgs.size() > 0) {
+    for (int i = 0; i < floatingImgs.size(); i++) {
+      FloatingImg fi = floatingImgs.get(i);
+      fi.x += fi.vx;
+      fi.y += fi.vy;
+      if (fi.x < 0 || fi.x > width - fi.w) fi.vx *= -1;
+      if (fi.y < 0 || fi.y > height - fi.h) fi.vy *= -1;
+      image(fi.img, fi.x, fi.y, fi.w, fi.h);
+    }
+  }
   
   // 再绘制粒子
   if (glowShader != null) shader(glowShader);
