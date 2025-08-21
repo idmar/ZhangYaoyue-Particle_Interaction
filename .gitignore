@@ -1,0 +1,27 @@
+# Processing build files
+*.class
+*.jar
+*.exe
+*.dll
+*.so
+*.pyc
+*.pde~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+*.iml
+.idea/
+.vscode/
+
+# Backup files
+*~
+*.bak
+
+# Logs
+*.log
+
+# Node modules (if used)
+node_modules/
